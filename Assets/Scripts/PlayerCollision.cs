@@ -10,7 +10,13 @@ public class PlayerCollision : MonoBehaviour
         if (other.gameObject.CompareTag("Maze"))
         {
             Debug.Log("a intrat");
-            ScoreManager.score -= 15;
+            ScoreManager.score -= 5;
+        }
+
+        if (other.gameObject.CompareTag("Monster"))
+        {
+            ScoreManager.score -= 50;
+//            Destroy(other.gameObject);
         }
     }
 }
