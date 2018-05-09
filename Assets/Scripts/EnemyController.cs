@@ -1,18 +1,22 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.AI;
 
 public class EnemyController : MonoBehaviour
 {
-    private Transform target;
+    private Transform targetPlayer;
     private NavMeshAgent agent;
     private Animator anim;
+    private bool isWalking = true;
 
     // Use this for initialization
     void Start()
     {
-        target = PlayerManager.instance.player.transform;
+        //it's not looking for every player object
+        targetPlayer = PlayerManager.instance.player.transform;
+        
         agent = GetComponent<NavMeshAgent>();
         anim = GetComponent<Animator>();
     }
@@ -20,13 +24,25 @@ public class EnemyController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        float distance = Vector3.Distance(target.position, transform.position);
-        agent.SetDestination(target.position);
+        agent.SetDestination(targetPlayer.position);
         Animating();
     }
 
     void Animating()
     {
-        anim.SetBool("IsWalking", true);
+        anim.SetBool("IsWalking", isWalking);
+    }
+
+    private void OnCollisionEnter(Collision other)
+    {
+        if (other.gameObject.CompareTag("Player"))
+        {
+            ScoreManager.score -= 50;
+            isWalking = false;
+            anim.SetBool("IsWalking", isWalking);
+            anim.SetTrigger("Die");
+            //destroy the monster after the anination is over.
+//            Destroy(this.gameObject);
+        }
     }
 }
